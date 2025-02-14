@@ -1,0 +1,10 @@
+Models
+
+Book - author,genre(fk),available_books,total_books,title
+Genre - name
+Borrowing_Record - member(fk),book(fk),borrow_date,due_date,return_date(null=True),status(Borrowed,Returned,Overdue)
+Reservation - member(fk),book(fk),reservation_date,status(Pending,Approved,Cancelled)
+Member - Phone, Address,user_idx
+
+User - username,email,password,role (admin,member)
+
