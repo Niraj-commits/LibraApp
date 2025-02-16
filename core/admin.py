@@ -10,7 +10,8 @@ class CustomUser(UserAdmin):
     form = CustomUserForm
     add_form = CustomUserForm
 
-    list_display = ['username', 'email', 'role']  
+    list_display = ['username', 'email', 'role']
+    list_editable = ['role']
     list_filter = ['role']
     search_fields = ['username', 'email']
     ordering = ['username']
