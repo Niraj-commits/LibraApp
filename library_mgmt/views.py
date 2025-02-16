@@ -20,7 +20,7 @@ class BookViewset(viewsets.ModelViewSet):
     
     def destroy(self,request,pk):
         queryset = Book.objects.get(pk = pk)
-        is_borrowed = Borrowing_Record.objects.filter(book = queryset).exists()
+        is_borrowed = BorrowingRecord.objects.filter(book = queryset).exists()
         is_reserved = Reservation.objects.filter(book = queryset).exists()
         if is_borrowed:
             raise serializers.ValidationError({"Details":"Book is Borrowed"})
@@ -36,3 +36,8 @@ class ReservationViewset(viewsets.ModelViewSet):
     
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
+
+class ReturnRecordViewset(viewsets.ModelViewSet):
+    
+    queryset = ReturnRecord.objects.select_related('book','member').all()
+    serializer_class = ReturnRecordSerializer

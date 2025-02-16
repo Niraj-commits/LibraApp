@@ -11,7 +11,7 @@ class BookSerializers(serializers.ModelSerializer):
         fields = ['id','title','genre','genre_id','author','is_available']
         
     def create(self,validated_data):
-        occurence = self.Meta.model.objects.filter(title = validated_data.get('title'),author = validated_data.get('author')).exists()
+        occurence = self.Meta.model.objects.filter(title = validated_data.get('title'),author = validated_data.get('author')).exists() #checking if the book with same name and author exist
         
         if occurence:
             raise serializers.ValidationError("Book With That Title Exists.")
@@ -48,26 +48,44 @@ class ReservationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         book = validated_data.get('book')
         status = validated_data.get('status')
+        member = validated_data.get('member')
+        
         if book.is_available and status == "approved": #if book is available then make it unavailable
             book.is_available = False
+            book.status = 'borrowed'
             book.save()
             
         elif not book.is_available:
             raise serializers.ValidationError("Sorry! Book is not available")
+        
         reservation = Reservation.objects.create(**validated_data)
+    
+        BorrowingRecord.objects.create(
+            book=book,member=member,borrow_date=reservation.reservation_date)
         return reservation
         
     def update(self,instance,validated_data):
         book = validated_data.get('book')
         status = validated_data.get('status')
-        if book.is_available and status == "approved":
+        if book.is_available and status == "approved": #To Check if book is available and reservation is approved
             book.is_available = False
             book.save()
-            instance.__dict__.update(validated_data)
-            return instance
 
-        else:
+        elif not book.is_available:
             raise serializers.ValidationError("Sorry! Book is not available")
         
+        instance.__dict__.update(validated_data) #using __dict__(existing object's attribute) and changing to (validated_data)
+        return instance
 
-    
+class ReturnRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReturnRecord
+        fields = ['id','member','book','return_date']
+        
+    def create(self,validated_data):
+        book = validated_data.get('book')
+        book.is_available = True
+        book.status = 'returned'
+        book.save()
+        returnedBook = ReturnRecord.objects.create(**validated_data)
+        return returnedBook
