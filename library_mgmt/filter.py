@@ -1,5 +1,6 @@
 from django_filters import rest_framework as filter
 from .models import *
+from core.models import User
 
 class genreFilter(filter.FilterSet):
     class Meta:
@@ -18,19 +19,19 @@ class bookFilter(filter.FilterSet):
             'is_available':['exact'],
         }
 
-class memberFilter(filter.FilterSet):
+class userFilter(filter.FilterSet):
     class Meta:
-        model = Member
+        model = User
         fields = {
-            'phone':['exact'],
+            'phone_number':['exact'],
             'address':['exact'],
+            'username':['exact'],
         }
-
 class reservationFilter(filter.FilterSet):
     class Meta:
         model = Reservation
         fields = {
-            'member':['exact'],
+            'user':['exact'],
             'book':['exact'],
             'reservation_date':['exact'],
             'status':['exact'],
@@ -40,7 +41,7 @@ class borrowRecordFilter(filter.FilterSet):
     class Meta:
         model = BorrowingRecord
         fields = {
-            'member':['exact'],
+            'user':['exact'],
             'book':['exact'],
             'borrow_date':['exact']
         }
@@ -49,7 +50,7 @@ class returnRecordFilter(filter.FilterSet):
     class Meta:
         model = ReturnRecord
         fields = {
-            'member':['exact'],
+            'user':['exact'],
             'book':['exact'],
             'return_date':['exact']
         }

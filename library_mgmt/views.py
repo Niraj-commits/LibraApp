@@ -8,18 +8,19 @@ from rest_framework.response import Response
 from .filter import *
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend 
+from .permission import CustomPermission
 # Create your views here.
 
 class GenreViewset(viewsets.ModelViewSet):
+    queryset = Genre.objects.all() #all objects of genre models
+    serializer_class = GenreSerializer #serializer class to change dictionary to json objects
+    pagination_class = CustomPagination #custom pagination class for paginating
+    filter_backends = [filters.SearchFilter,filter.DjangoFilterBackend] #filters for searching
+    search_fields = ['name'] #field name for search
+    filterset_class = genreFilter #custom filter class
+    permission_classes = [CustomPermission]
     
-    queryset = Genre.objects.all()
-    serializer_class = GenreSerializer
-    pagination_class = CustomPagination
-    filter_backends = [filters.SearchFilter,filter.DjangoFilterBackend]
-    search_fields = ['name']
-    filterset_class = genreFilter
-    
-    def destroy(self,request,pk):
+    def destroy(self,request,pk): #for checking and deleting genre
         queryset = Genre.objects.get(pk = pk)
         genre_exist = Book.objects.filter(genre = queryset).exists()
         if genre_exist:
@@ -37,6 +38,7 @@ class BookViewset(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filter.DjangoFilterBackend]
     search_fields = ['genre','title','author']
     filterset_class = bookFilter
+    permission_classes = [CustomPermission]
     
     def destroy(self,request,pk):
         queryset = Book.objects.get(pk = pk)
@@ -52,37 +54,17 @@ class BookViewset(viewsets.ModelViewSet):
             queryset.delete()
             return Response({"Details":"Data has been deleted"})
 
-class MemberViewset(viewsets.ModelViewSet):
-    queryset = Member.objects.select_related('user').all()
-    serializer_class = MemberSerializer
-    pagination_class = CustomPagination
-    filter_backends = [filters.SearchFilter,filter.DjangoFilterBackend]
-    search_fields = ['phone','address']
-    filterset_class = memberFilter
-    
-    def destroy(self,request,pk):
-        queryset = Genre.objects.get(pk = pk)
-        reservation_record = Book.objects.filter(member = queryset).exists()
-        borrowing_record = BorrowingRecord.objects.filter(member = queryset).exists()
-        return_record = ReturnRecord.objects.filter(member = queryset).exists()
-        
-        if reservation_record:
-            raise serializers.ValidationError({"Details":"Reservation records exists for this member."},status = status.HTTP_226_IM_USED)
-        if borrowing_record:
-            raise serializers.ValidationError({"Details":"Borrowing records exists for this member."},status = status.HTTP_226_IM_USED)
 
-        else:
-            queryset.delete()
-            return Response({"Details":"Member has been deleted"})
     
 class ReservationViewset(viewsets.ModelViewSet):
     
-    queryset = Reservation.objects.select_related('member','book').all()
+    queryset = Reservation.objects.select_related('book').all()
     serializer_class = ReservationSerializer
     pagination_class = CustomPagination
     filter_backends = [filters.SearchFilter,filter.DjangoFilterBackend]
     search_fields = ['book','reservation_date','status']
     filterset_class = reservationFilter
+    permission_classes = [CustomPermission]
     
     def destroy(self,request,pk):
         queryset = Reservation.objects.get(pk = pk)
@@ -96,24 +78,26 @@ class ReservationViewset(viewsets.ModelViewSet):
 
 class BorrowingRecordViewset(viewsets.ModelViewSet):
     
-    queryset = BorrowingRecord.objects.select_related('member','book').all()
+    queryset = BorrowingRecord.objects.select_related('book').all()
     serializer_class = BorrowingRecordSerializer
     pagination_class = CustomPagination
     filter_backends = [filters.SearchFilter,filter.DjangoFilterBackend]
-    search_fields = ['member','book','borrow_date']
+    search_fields = ['user','book','borrow_date']
     filterset_class = borrowRecordFilter
+    permission_classes = [CustomPermission]
     
     def destroy(self,request,pk):
         raise serializers.ValidationError({"Details":"Borrowing record cannot be deleted"},status = status.HTTP_401_UNAUTHORIZED)
 
 class ReturnRecordViewset(viewsets.ModelViewSet):
     
-    queryset = ReturnRecord.objects.select_related('book','member').all()
+    queryset = ReturnRecord.objects.select_related('book').all()
     serializer_class = ReturnRecordSerializer
     pagination_class = CustomPagination
     filter_backends = [filters.SearchFilter,filter.DjangoFilterBackend]
-    search_fields = ['member','book','return_date']
+    search_fields = ['user','book','return_date']
     filterset_class = returnRecordFilter
+    permission_classes = [CustomPermission]
     
     def destroy(self,request,pk):
         raise serializers.ValidationError({"Details":"Returned record cannot be deleted"},status = status.HTTP_401_UNAUTHORIZED)
