@@ -18,6 +18,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
             
         password = validated_data.pop('password') #To not show user password
         username = self.Meta.model.objects.create(**validated_data)
-        username.set_password(password)
+        username.set_password(password) #Hashing password
         username.save()
         return username

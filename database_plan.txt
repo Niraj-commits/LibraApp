@@ -1,10 +1,43 @@
 Models
 
-Book - author,genre(fk),available_books,total_books,title
-Genre - name
-Borrowing_Record - member(fk),book(fk),borrow_date,due_date,return_date(null=True),status(Borrowed,Returned,Overdue)
-Reservation - member(fk),book(fk),reservation_date,status(Pending,Approved,Cancelled)
-Member - Phone, Address,user_idx
+1. User
+- id (pk)
+- username (char)
+- email (char)
+- phone_number(char)
+- address (char)
+- role (choices : [member,admin])
 
-User - username,email,password,role (admin,member)
+2. Book
+- id (pk)
+- title (char)
+- author (char)
+- genre (fk)
+- is_available (bool)
+- status(choices : [none,borrowed,returned])
+
+3. Genre
+- id (pk)
+- name (char)
+
+4. Reservation
+- id(pk)
+- user(fk)
+- book(fk)
+- reservation_date(date_auto)
+- due_date (date)
+- status(choices : [approved,cancelled,pending])
+
+5. Borrowing Record
+- id(pk)
+- user(fk)
+- book(fk)
+- borrow_date(date same as reservation_date)
+- due_date(date same as due_date)
+
+6. Return Record
+- id(pk)
+- user(fk)
+- book(fk)
+- return_date(date_auto)
 

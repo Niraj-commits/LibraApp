@@ -27,12 +27,14 @@ class Reservation(models.Model):
     user = models.ForeignKey(User,on_delete = models.CASCADE,default=None)
     book = models.ForeignKey(Book,on_delete = models.PROTECT,default=None)
     reservation_date = models.DateField(auto_now_add=True)
+    due_date = models.DateField()
     status = models.CharField(max_length=50,choices=reserve_status,default='pending')
   
 class BorrowingRecord(models.Model):
     user = models.ForeignKey(User,on_delete = models.CASCADE,default=None)
     book = models.ForeignKey(Book,on_delete = models.PROTECT,default=None)
     borrow_date = models.DateField(auto_now_add=True)
+    due_date = models.DateField()
     
     def __str__(self):
         return f"{self.user} borrowed {self.book}"
