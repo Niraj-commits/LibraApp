@@ -25,15 +25,19 @@ Coming Soon
    git clone https://github.com/Niraj-commits/LibraApp.git
    cd LibraApp
 2. Create annd activate a virtual environment
-   -python -m venv env
-   -source env/bin/activate   # For Linux/Mac
-   -env\Scripts\activate      # For Windows
-3. Install Dependencies
-   -pip install -r requirements.txt
-4. Apply Migrations
-   -python manage.py makemigrations
-   -python manage.py migrate
-5. Create Superuser and Run the server
-   -python manage.py createsuperuser
-   -python manage.py runserver
+   ```bash
+   python -m venv env
+   source env/bin/activate   # For Linux/Mac
+   env\Scripts\activate      # For Windows
+4. Install Dependencies
+   ```bash
+   pip install -r requirements.txt
+6. Apply Migrations
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+8. Create Superuser and Run the server
+   ```bash
+   python manage.py createsuperuser
+   python manage.py runserver
 
