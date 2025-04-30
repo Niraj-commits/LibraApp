@@ -2,7 +2,7 @@
 
 A Django-based web application for managing a library's book inventory, user records, and book issuing/returning process. Designed with role-based access for admins and users, LibraApp simplifies day-to-day library tasks using a clean, responsive interface.
 
-## 🚀 Live Demo
+##Live Demo
 Coming Soon
 
 #Tools & Technologies
